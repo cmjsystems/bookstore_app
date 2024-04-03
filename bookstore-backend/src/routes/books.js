@@ -127,7 +127,7 @@ router.put('/book/:id', (req, res) => {
     isbn = ?,
     category = ?,
     quantity = ?,
-    price = ?,
+    price = ?
     WHERE id = ?`,
     [title, author, isbn, category, quantity, price, id],
     (err) => {

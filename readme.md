@@ -17,6 +17,7 @@
     * git remote add origin https://github.com/cmjsystems/bookstore_app.git
     * git branch -M main
     * git push -u origin main
+
 - Clone from GitHub to local machine:
   * git clone https://github.com/cmjsystems/bookstore_app.git
 

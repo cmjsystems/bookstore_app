@@ -1,6 +1,5 @@
-import React, { useContext, useState } from "react";
-import { useNavigate } from 'react-router-dom';
-
+import React, { useContext, useState, useEffect } from "react";
+import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from "../contexts/AuthProvider";
 
 import Header from "../components/Header";
@@ -12,48 +11,73 @@ import api from '../util/api';
 
 import "./../App.css";
 
-function AddBookPage() {
+function UpdBookPage() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const { id } = useParams();
 
-  const { setBook } = useContext(AuthContext);
+  // const { setBook } = useContext(AuthContext);
 
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [isbn, setISBN] = useState('');
-  const [category, setCategory] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [price, setPrice] = useState('');
+  const [title    , setTitle]     = useState('');
+  const [author   , setAuthor]    = useState('');
+  const [isbn     , setISBN]      = useState('');
+  const [category , setCategory]  = useState('');
+  const [quantity , setQuantity]  = useState('');
+  const [price    , setPrice]     = useState('');
 
   const [error, setError] = useState('');
 
-  const handleAddNewBook = async () => {
+  // Load the book data to be updated from the database into the form
+  useEffect(() => {
+    const loadBook = async () => {
+      try {
+        const response = await api.get(`/books/book/${id}`);
+        const { book } = response.data;
+   
+        setTitle(book.title);
+        setAuthor(book.author);
+        setISBN(book.isbn);
+        setCategory(book.category);
+        setQuantity(book.quantity);
+        setPrice(book.price);
+  
+      } catch (error) {
+        setError('Error fetching book data.');
+      }
+    }
+
+    loadBook();
+  }, [id]);
+
+  // Update the book data in the database
+  const handleUpdIdBook = async () => {
     if (!title || !author || !isbn || !category || !quantity || !price) {
       setError('All fields are required.');
       return;
     }
+    
     try {
-      const payload = { title, author, isbn, category, quantity, price };
-      const response = await api.post('/book', payload);
-
+      const bookData = {
+        title: title,
+        author: author,
+        isbn: isbn,
+        category: category,
+        quantity: quantity,
+        price: price
+      };
+      const response = await api.put(`/book/${id}`, bookData);
       console.log(response)
 
-      if (response.status === 201) {
-        navigate('/booklist');
+      if (response.status === 200) {
+        navigate('/booklist');      // Navigate to the Booklist page
       }
     } catch (error) {
-      setError('Error registering the book.', error);
+      setError('Error updating the book.');
     }
   };
-
-  // Validate the Title field
-  // if (setTitle.length < 3 || setTitle.length > 40 ) {
-  //   setError("A title with a minimum of 3 and a maximum of 40 characters is mandatory.");
-  //   return;
-  // }
-
+ 
   function handleHomePageClick() {
-    navigate('/');        // Navigate to the Home page
+    navigate('/');            // Navigate to the Home page
   }
 
   function handleBooklistPageClick() {
@@ -70,14 +94,17 @@ function AddBookPage() {
       <p>
         {user && (
           <h2>
-            Hi {user.fullname} <i>(type: {user.type})</i>. Add New Book!
+            Hi {user.fullname} <i>(type: {user.type})</i>. Update Book!
           </h2>
         )}
       </p>
       <br />
       <br />
 
-      <form className="form_3" onSubmit={handleAddNewBook} >
+      <p>Book ID....: ({id})</p>
+      <br />
+
+      <form className="form_3" onSubmit={handleUpdIdBook} >
         <Input
           id="title"
           label="Title:"
@@ -130,11 +157,11 @@ function AddBookPage() {
           onChange={(e) => setPrice(e.target.value)}
         />
 
-        <div className="div_row_buttons" />
+        {/* <div className="div_row_buttons" /> */}
 
         <p className="p_error"> {error} </p>
         <div className="div_row_buttons2">
-          <Button onClick={handleAddNewBook} label="Add Book" />
+          <Button onClick={handleUpdIdBook} label="Upd Book" />
           <Button onClick={handleBooklistPageClick} label="Booklist" />
           <Button onClick={handleHomePageClick} label="Logout" />
         </div>
@@ -150,4 +177,4 @@ function AddBookPage() {
   );
 };
 
-export default AddBookPage; 
+export default UpdBookPage; 

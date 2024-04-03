@@ -12,9 +12,8 @@ import MainPage from './pages/Main';
 import BooklistPage from './pages/Booklist';
 import OrdersPage from './pages/Orders';
 import AddBookPage from './pages/AddBook';
-// import UpdateBookPage from './pages/UpdateBook';
-// import BooksByAuthorPage from './pages/BooksByAuthor';
-// import BooksUnderPricePage from './pages/BooksUnderPrice';
+import UpdBookPage from './pages/UpdBook';
+import CartPage from './pages/Cart';
 // import QuitPage from './pages/Quit';
 
 import './App.css';
@@ -35,9 +34,8 @@ function App() {
         <Route path="/booklist" element={<BooklistPage />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/addbook" element={<AddBookPage />} />
-        {/* <Route path="/updatebook" element={<UpdateBookPage />} /> */}
-        {/* <Route path="/booksbyauthor" element={<BooksByAuthorPage />} /> */}
-        {/* <Route path="/booksunderprice" element={<BooksUnderPricePage />} /> */}
+        <Route path="/updbook/:id" element={<UpdBookPage />} />
+        <Route path="/cart" element={<CartPage />} />
         {/* <Route path="/quit" element={<QuitPage />} /> */}
       </Routes>
     </BrowserRouter>

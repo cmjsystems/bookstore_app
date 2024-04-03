@@ -41,12 +41,20 @@ function BooklistPage() {
     fetchBookList();              // Clear the filter
   }
 
-  function handleUpdBookClick() {
-    navigate('/updatebook')       // Navigate to the Update Book page
+  async function handleUpdBookClick(bookId) {
+    navigate(`/updbook/${bookId}`);       // Navigate to the Update Book page with the book ID
   }
 
-  function handleDelBookClick() {
-      navigate('/deletebook')       // Navigate to the Delete Book page
+  async function handleDelBookClick(id) {
+    try {
+      const response = await api.delete(`/book/${id}`);
+      if (response.status !== 200) {
+        console.error('Error deleting book:', response.data);
+      }
+      fetchBookList();
+    } catch (error) {
+      console.error('Error deleting book:', error);
+    }
   }
 
   async function handleBooksByAuthorClick() {
@@ -219,15 +227,18 @@ function BooklistPage() {
               <tr key={book.id}>
                 {/* Show the buttons grupo bellow just if the logged user is administrator type */}
                 {isUserAdmin && (
-                  <td className="table_td_1"> <Button onClick={handleUpdBookClick} label="Upd" /> </td>
+                  // <td className="table_td_1"> <Button onClick={handleUpdBookClick} label="Upd" /> </td>
+                  <td> <button onClick={() => handleUpdBookClick(book.id)}>Upd</button> </td>
                 )}
                 {isUserAdmin && (
-                  <td className="table_td_1"> <Button onClick={handleDelBookClick} label="Del" /> </td>
+                  // <td className="table_td_1"> <Button onClick={handleDelBookClick} label="Del" /> </td>
+                  <td> <button onClick={() => handleDelBookClick(book.id)}>Del</button> </td>
                 )}
 
                 {/* Show the buttons grupo bellow just if the logged user is user type */}
                 {isUserUser && (
-                  <td className="table_td_1"> <Button onClick={handleCartPageClick} label="Cart" /> </td>
+                  // <td className="table_td_1"> <Button onClick={handleCartPageClick} label="Cart" /> </td>
+                  <td> <button onClick={() => handleCartPageClick(book.id)}>Cart</button> </td>
                 )}
                 <td className="table_td_1"> {book.id}         </td>
                 <td className="table_td_1"> {book.title}      </td>
