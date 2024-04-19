@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from "../contexts/AuthProvider";
+import { CartContext } from "../contexts/CartProvider";
 
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -15,6 +16,9 @@ function UpdBookPage() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const { id } = useParams();
+  const { clearCart } = useContext(CartContext);
+
+  console.log('UpdBookPage: id =', id);
 
   // const { setBook } = useContext(AuthContext);
 
@@ -77,6 +81,7 @@ function UpdBookPage() {
   };
  
   function handleHomePageClick() {
+    clearCart();
     navigate('/');            // Navigate to the Home page
   }
 

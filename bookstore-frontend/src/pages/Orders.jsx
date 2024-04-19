@@ -3,16 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import "./../App.css";
 
 import { AuthContext } from "../contexts/AuthProvider";
-// import { InventoryContext } from "../contexts/InventoryProvider";
+import { CartContext } from "../contexts/CartProvider";
 
 import Button from "../components/Button";
 import Footer from "../components/Footer";
 
 function OrdersPage() {
+  const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const isUserAdmin = user && user.type === 'admin';
   const isUserUser = user && user.type === 'user';
-  const navigate = useNavigate();
+  const { clearCart } = useContext(CartContext);
+
 //   const inventory = useContext(InventoryContext);
 //   const [showBooks, setShowBooks] = useState(inventory.books.length > 0);
 
@@ -68,7 +70,8 @@ function OrdersPage() {
   }
 
   function handleHomePageClick() {
-    navigate('/');                  // Navigate to the Home page
+    clearCart();
+    navigate('/');        // Navigate to the Home page
   }
 
   return (

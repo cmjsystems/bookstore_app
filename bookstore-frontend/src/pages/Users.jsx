@@ -4,6 +4,7 @@ import api from '../util/api';
 import "./../App.css";
 
 import { AuthContext } from "../contexts/AuthProvider";
+import { CartContext } from "../contexts/CartProvider";
 
 import Button from "../components/Button";
 import Footer from "../components/Footer";
@@ -12,6 +13,7 @@ function UsersPage() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [userList, setUserList] = useState([]);  // List of users
+  const { clearCart } = useContext(CartContext);
 
   // const userList = [      // List of users
   //         { id: 1, username: 'admin', fullname: 'Admin User', type: 'admin' },
@@ -63,6 +65,7 @@ function UsersPage() {
   }
   
   function handleHomePageClick() {
+    clearCart();
     navigate('/');                        // Navigate to the Home page
   }
 

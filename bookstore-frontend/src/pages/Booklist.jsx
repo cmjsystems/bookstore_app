@@ -4,6 +4,7 @@ import api from '../util/api';
 import "./../App.css";
 
 import { AuthContext } from "../contexts/AuthProvider";
+import { CartContext } from "../contexts/CartProvider";
 
 import Button from "../components/Button";
 import Footer from "../components/Footer";
@@ -16,8 +17,10 @@ function BooklistPage() {
 
   // const user = { id: 1, username: 'admin', type: 'admin' };
   const { user } = useContext(AuthContext);
+  const { addToCart } = useContext(CartContext);
   const isUserAdmin = user && user.type === 'admin';
   const isUserUser = user && user.type === 'user';
+  const { clearCart } = useContext(CartContext);
 
   const fetchBookList = async () => {
     try {
@@ -118,7 +121,22 @@ function BooklistPage() {
   }
 
   function handleCartPageClick() {
-    navigate('/cart');            // Navigate to the Cart page
+    navigate('/cart');                  // Navigate to the Cart page
+  }
+  
+  async function handleAddToCartClick(id) {
+    const amount = prompt('Enter the amount:');
+
+    if (amount === null) return;
+
+    const item = { id, amount: parseInt(amount) };
+
+    // Check if the amount is valid
+    if (item.amount > 0 && item.amount <= bookList.find(book => book.id === id).quantity) {
+      await addToCart(item);
+    } else {
+      alert('Invalid amount. Enter a quantity less than or equal to that available in stock.');
+    }
   }
 
   function handleOrdersPageClick() {
@@ -130,7 +148,8 @@ function BooklistPage() {
   }
 
   function handleHomePageClick() {
-    navigate('/');                  // Navigate to the Home page
+    clearCart();
+    navigate('/');        // Navigate to the Home page
   }
 
   return (
@@ -166,21 +185,31 @@ function BooklistPage() {
         </div>
       </div>
 
-      <p>
-        <Button onClick={handleClearFilterClick} label="Clear Filter" />
-        &ensp;
-        &ensp;
-        &ensp;
+      <div className="div_row_buttons3">
+        <>  
+          <p>
+            {/* Show the buttons grupo bellow just if the logged user is user type */}
+            {isUserUser && (
+              <Button onClick={handleCartPageClick} label="Cart" />
+            )}
+            
+            &ensp;
+            &ensp;
+            <Button onClick={handleClearFilterClick} label="Clear Filter" />
+      
+            &ensp;
+            &ensp;
+            {/* Show the buttons grupo bellow just if the logged user is administrator type */}
+            {isUserAdmin && (
+              <Button onClick={handleAddBookClick} label="Add Book" />
+            )}
+            &ensp;
+            &ensp;
         
-        {/* Show the buttons grupo bellow just if the logged user is administrator type */}
-        {isUserAdmin && (
-          <Button onClick={handleAddBookClick} label="Add Book" />
-        )}
-        &ensp;
-        &ensp;
-        
-        List of available books: ({bookList.length})
-      </p>
+            List of available books: ({bookList.length})
+          </p>
+        </>
+      </div>                   
       
       <>
         <table className="table_1">
@@ -238,27 +267,27 @@ function BooklistPage() {
                 {/* Show the buttons grupo bellow just if the logged user is user type */}
                 {isUserUser && (
                   // <td className="table_td_1"> <Button onClick={handleCartPageClick} label="Cart" /> </td>
-                  <td> <button onClick={() => handleCartPageClick(book.id)}>Cart</button> </td>
+                  <td> <button onClick={() => handleAddToCartClick(book.id)}>Add to Cart</button> </td>
                 )}
-                <td className="table_td_1"> {book.id}         </td>
-                <td className="table_td_1"> {book.title}      </td>
-                <td className="table_td_1"> {book.author}     </td>
-                <td className="table_td_1"> {book.isbn}       </td>
-                <td className="table_td_1"> {book.category}   </td>
-                <td className="table_td_1"> {book.price}      </td>
+                <td className="table_td_1"> {book.id}               </td>
+                <td className="table_td_1"> {book.title}            </td>
+                <td className="table_td_1"> {book.author}           </td>
+                <td className="table_td_1"> {book.isbn}             </td>
+                <td className="table_td_1"> {book.category}         </td>
+                <td className="table_td_1"> {book.price.toFixed(2)} </td>
                 {/* Show the Users field just if the logged user is administrator type */}
                 {isUserAdmin && (
-                  <td className="table_td_1"> {book.quantity}   </td>
+                  <td className="table_td_1"> {book.quantity}       </td>
                 )}
                 
                 {/* Show the Users field just if the logged user is administrator type
                 {isUserAdmin && ( */}
-                  <td className="table_td_1"> {book.quantity}   </td>
+                  <td className="table_td_1"> {book.quantity}       </td>
                 {/* )} */}
 
                 {/* Show the Users field just if the logged user is administrator type */}
                 {isUserAdmin && (
-                  <td className="table_td_1"> {book.quantity * book.price}   </td>
+                  <td className="table_td_1"> {(book.quantity * book.price).toFixed(2)} </td>
                 )}
               </tr>
             ))}

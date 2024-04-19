@@ -6,7 +6,7 @@ import { AuthContext } from "../contexts/AuthProvider";
 import Header from "../components/Header";
 import Button from "../components/Button";
 import Footer from "../components/Footer";
-// import { InventoryContext } from "../contexts/InventoryProvider";
+import { CartContext } from "../contexts/CartProvider";
 
 function MainPage() {
   // const loggedUser = { id: 1, username: 'admin', type: 'admin' };
@@ -15,6 +15,7 @@ function MainPage() {
   const { user } = useContext(AuthContext);
   const isUserAdmin = user && user.type === 'admin';
   const isUserUser = user && user.type === 'user';
+  const { clearCart } = useContext(CartContext);
 
 //   const inventory = useContext(InventoryContext);
 //   const [showBooks, setShowBooks] = useState(inventory.books.length > 0);
@@ -24,23 +25,20 @@ function MainPage() {
 //   }, [inventory.books.length]);
 
   function handleBooklistPageClick() {
-    // Navigate to the Booklist page
-    navigate('/booklist');
+    navigate('/booklist');       // Navigate to the Booklist page
   }
 
   function handleOrdersPageClick() {
-    // Navigate to the Orders page
-    navigate('/orders');
+    navigate('/orders');        // Navigate to the Orders page
   }
 
   function handleUsersPageClick() {
-    // Navigate to the Users page
-    navigate('/users');
+    navigate('/users');         // Navigate to the Users page
   }
 
   function handleHomePageClick() {
-    // Navigate to the Home page
-    navigate('/');
+    clearCart();
+    navigate('/');              // Navigate to the Home page
   }
 
   return (

@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import { AuthContext } from "../contexts/AuthProvider";
+import { CartContext } from "../contexts/CartProvider";
 
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -17,6 +18,7 @@ function AddBookPage() {
   const { user } = useContext(AuthContext);
 
   const { setBook } = useContext(AuthContext);
+  const { clearCart } = useContext(CartContext);
 
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
@@ -53,6 +55,7 @@ function AddBookPage() {
   // }
 
   function handleHomePageClick() {
+    clearCart();
     navigate('/');        // Navigate to the Home page
   }
 

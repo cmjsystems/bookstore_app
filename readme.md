@@ -42,6 +42,7 @@ Backend (Node.js with Express and SQLite3):
    * npm install express sqlite3 better-sqlite3 bcrypt jsonwebtoken
    * npm install body-parser cors dotenv
    * npm install nodemon -D
+   * ...or run: npm i (to create the node_modules folder)
 
 2. Create a file named "src/server.js" for your backend
    (It's done/created..)

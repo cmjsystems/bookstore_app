@@ -43,11 +43,11 @@ function LoginPage() {
   };
 
   const handleRegisterClick = async (e) => {
-    navigate('/register'); // Navigate to the Register/Login page
+    navigate('/register');      // Navigate to the Register/Login page
   }
 
   function handleHomePageClick() {
-    navigate('/'); // Navigate to the Home page
+    navigate('/');              // Navigate to the Home page
   }
 
   // function handleBookshopPageClick() {
@@ -93,7 +93,7 @@ function LoginPage() {
           />
         </div>
 
-        <div className="div_row_buttons" />
+        <div className="div_row_buttons" />   {/* Empty row for spacing */}
 
         <div className="div_row_buttons2">
           <Button onClick={handleLogin} label="Login" />

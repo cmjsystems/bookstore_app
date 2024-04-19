@@ -222,10 +222,10 @@ hr {
 .table_1 {
   margin-top: 20px;
   margin-bottom: 40px;
-  border-collapse: collapse;
+  /* border-collapse: collapse; */
   width: 70%;
   text-align: center;
-  font-size: 1rem;
+  font-size: 1.2rem;
 }
 
 .table_th_1 {
@@ -237,6 +237,29 @@ hr {
 }
 
 .table_td_1 {
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+  border-collapse: collapse;
+}
+
+.table_2 {
+  margin-top: 20px;
+  /* margin-bottom: 40px; */
+  /* border-collapse: collapse; */
+  width: 50%;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.table_th_2 {
+  padding: 8px 0;
+  background-color: #007BFF;
+  color: #fff;
+  border-bottom: 1px solid #ddd;
+  border-collapse: collapse;
+}
+
+.table_td_2 {
   padding: 8px 0;
   border-bottom: 1px solid #ddd;
   border-collapse: collapse;
