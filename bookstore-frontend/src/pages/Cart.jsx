@@ -46,6 +46,11 @@ function CartPage() {
   }
 
   async function handleCheckoutClick() {
+    if (itemsWithDetails.length === 0) {
+      alert("Your cart is empty. Please add items before checking out.");
+      return;
+    }
+
     const confirmed = window.confirm("Would you like to confirm the order?");
 
     if (confirmed) {

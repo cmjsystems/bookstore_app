@@ -7,12 +7,12 @@ const db = new sqlite3.Database(process.env.DB_PATH || '');
 // Get the Books list
 router.get('/books', (req, res) => {
   const query = `SELECT books.*
-                  , sum(order_items.quantity) ordered
-                  , books.quantity - sum(order_items.quantity) avaiable 
-                FROM books 
-                JOIN order_items ON books.id = order_items.book_id
+                  , SUM(IFNULL(order_items.quantity,0)) ordered
+                  , books.quantity - SUM(IFNULL(order_items.quantity,0)) avaiable 
+                FROM books
+                LEFT JOIN order_items ON books.id = order_items.book_id
                 GROUP BY books.id`
-  // db.all('SELECT books.*, sum(order_items.quantity) ordered, books.quantity - sum(order_items.quantity) avaiable FROM books JOIN order_items ON books.id = order_items.book_id', (err, rows) => {
+  // db.all('SELECT books.*, sum(order_items.quantity) inorder, books.quantity - sum(order_items.quantity) avaiable FROM books JOIN order_items ON books.id = order_items.book_id', (err, rows) => {
   db.all(query, (err, rows) => {
     if (err) {
       console.error('Error fetching books:', err);
