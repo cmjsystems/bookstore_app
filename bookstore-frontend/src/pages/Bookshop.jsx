@@ -12,6 +12,7 @@ import Footer from "../components/Footer";
 function BookshopPage() {
   const navigate = useNavigate();
   const [bookList, setBookList] = useState([]);  // List of books
+  const [bookListApi, setBookListApi] = useState([]);
 
   // Validate the password with a maximum of attempts
   function handleLogin() {
@@ -40,6 +41,7 @@ function BookshopPage() {
     try {
       const response = await api.get('/books');
       const { books } = response.data;
+      setBookListApi(books);            // Set bookListApi to the books array
       setBookList(books);
     } catch (error) {
       console.error('Error fetching book list:', error);
@@ -60,64 +62,80 @@ function BookshopPage() {
     }
   }
 
+  // Find the books by title
+  async function handleBooksByTitleClick() {
+    const title = prompt('Enter the title:');
+
+    if (title === null) {
+      setBookList(bookListApi);
+      return;
+    };
+
+    if (title) {
+      // const filteredBooks = bookListApi.filter(book => book.title === title);
+      // const filteredBooks = bookListApi.filter(book => book.title.includes(title));
+       const filteredBooks = bookListApi.filter(book => book.title.toLowerCase().includes(title.toLowerCase()));
+      setBookList(filteredBooks);
+    } else {
+      setBookList(bookListApi);
+    }
+  }
+
+  // Find the books by author
   async function handleBooksByAuthorClick() {
-    // Find the books by author
     const author = prompt('Enter the author:');
 
-    if (author === null) return;
-
-    if (!author) {
-      fetchBookList();
+    if (author === null) {
+      setBookList(bookListApi);
       return;
-    }
+    };
 
-    try {
-      const response = await api.get(`/books/author/${author}`);
-      const { books } = response.data;
-      setBookList(books);
-    } catch (error) {
-      console.error('Error fetching book list:', error);
+    if (author) {
+      // const filteredBooks = bookListApi.filter(book => book.author === author);
+      // const filteredBooks = bookListApi.filter(book => book.author.includes(author));
+       const filteredBooks = bookListApi.filter(book => book.author.toLowerCase().includes(author.toLowerCase()));
+      setBookList(filteredBooks);
+    } else {
+      setBookList(bookListApi);
     }
   }
 
+  // Find the books by category
   async function handleBooksByCategoryClick() {
-    // Find the books by category
     const category = prompt('Enter the category:');
 
-    if (category === null) return;
-
-    if (!category) {
-      fetchBookList();
+    if (category === null) {
+      setBookList(bookListApi);
       return;
-    }
+    };
 
-    try {
-      const response = await api.get(`/books/category/${category}`);
-      const { books } = response.data;
-      setBookList(books);
-    } catch (error) {
-      console.error('Error fetching book list:', error);
+    if (category) {
+      // const filteredBooks = bookListApi.filter(book => book.category === category);
+      // const filteredBooks = bookListApi.filter(book => book.category.includes(category));
+      const filteredBooks = bookListApi.filter(book => book.category.toLowerCase().includes(category.toLowerCase()));
+      setBookList(filteredBooks);
+    } else {
+      setBookList(bookListApi);
     }
   }
 
-  async function handleBooksUnderPriceClick() {
-    // Find the books under price
-    const price = prompt('Enter the price:');
+  // Find the books under price
+  async function handleBooksByPriceClick() {
+    const minPrice = parseFloat(prompt('Enter the minimum price:'));
+    const maxPrice = parseFloat(prompt('Enter the maximum price:'));
 
-    if (price === null) return;
-
-    if (!price) {
-      fetchBookList();
+    if (minPrice === null || maxPrice === null) {
+      setBookList(bookListApi);
       return;
     }
 
-    try {
-      const response = await api.get(`/books/price/${price}`);
-      const { books } = response.data;
-      setBookList(books);
-    } catch (error) {
-      console.error('Error fetching book list:', error);
+    if (isNaN(minPrice) || isNaN(maxPrice)) {
+      alert('Please enter valid prices.');
+      return;
     }
+
+    const filteredBooks = bookListApi.filter(book => book.price >= parseFloat(minPrice) && book.price <= parseFloat(maxPrice));
+    setBookList(filteredBooks);
   }
 
   function handleClearFilterClick() {
@@ -136,24 +154,20 @@ function BookshopPage() {
       <p>In our bookstore you will find several varieties of books from the most diverse categories...</p>
 
       <br />
-
-      {/* {user && (
-        <p>Welcome, {user.fullname}, (type: {user.type})!</p>
-      )} */}
-
       <br />
 
       <div className="div_row_buttons3">
         {/* <Button onClick={handleHomePageClick} label="Home Page" /> */}
         <Button onClick={handleLoginPageClick} label="Login" />
-        <Button onClick={handleRegisterAdmPageClick} label="Intranet" />
+        <Button onClick={handleRegisterAdmPageClick} label="Intranet (create admin user only)" />
       </div>
 
       <div className="div_row_buttons3">
           <>
-            <Button onClick={handleBooksByAuthorClick} label="Display all books by a specific author" />
-            <Button onClick={handleBooksByCategoryClick} label="Display all books by a specific category" />
-            <Button onClick={handleBooksUnderPriceClick} label="Display all books under a certain price" />
+            <Button onClick={handleBooksByTitleClick} label="Filter all books by title" />
+            <Button onClick={handleBooksByAuthorClick} label="Filter all books by author" />
+            <Button onClick={handleBooksByCategoryClick} label="Filter all books by category" />
+            <Button onClick={handleBooksByPriceClick} label="Filter all books by price" />
           </>
       </div>
 
@@ -184,12 +198,12 @@ function BookshopPage() {
           <tbody>
             {bookList && bookList.map(book => (
               <tr key={book.id}>
-                <td className="table_td_1"> {book.id}       </td>
-                <td className="table_td_1"> {book.title}    </td>
-                <td className="table_td_1"> {book.author}   </td>
-                <td className="table_td_1"> {book.isbn}     </td>
-                <td className="table_td_1"> {book.category} </td>
-                <td className="table_td_1"> {book.price}    </td>
+                <td className="table_td_1"> {book.id}                 </td>
+                <td className="table_td_1"> {book.title}              </td>
+                <td className="table_td_1"> {book.author}             </td>
+                <td className="table_td_1"> {book.isbn}               </td>
+                <td className="table_td_1"> {book.category}           </td>
+                <td className="table_td_1"> {(book.price).toFixed(2)} </td>
               </tr>
             ))}
           </tbody>

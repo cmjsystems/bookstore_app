@@ -29,7 +29,7 @@ function LoginPage() {
 
       if (!username || !password) {
         console.error('All fields are required.');
-      return;
+        return;
       }
 
       if (user) {
@@ -37,9 +37,9 @@ function LoginPage() {
         navigate('/main');
       }
       setError('Error returning user data');
-        } catch (error) {
-          setError('Invalid username or password');
-        }
+    } catch (error) {
+      setError('Invalid username or password');
+    }
   };
 
   const handleRegisterClick = async (e) => {

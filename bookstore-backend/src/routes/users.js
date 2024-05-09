@@ -18,7 +18,22 @@ router.get('/users', (req, res) => {
   });
 });
 
-// Get a specific Book by User name
+// Get a specific User by ID
+router.get('/users/id/:id', (req, res) => {
+  const { id } = req.params;
+  db.get('SELECT * FROM users WHERE id = ?', [id], (err, row) => {
+    if (err) {
+      console.error('Error fetching id:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else if (!row) {
+      res.status(404).json({ error: 'User name not found' });
+    } else {
+      res.json({ user: row });
+    }
+  });
+});
+
+// Get a specific User by User name
 router.get('/users/username/:username', (req, res) => {
   const { username } = req.params;
   db.get('SELECT * FROM users WHERE username = ?', [username], (err, row) => {
@@ -73,6 +88,7 @@ router.post('/login', (req, res) => {
           res.status(200).json({
             token,
             user: {
+              id: user.id,
               username: user.username,
               fullname: user.fullname,
               type: user.type

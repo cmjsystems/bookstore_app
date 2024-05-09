@@ -43,6 +43,7 @@ Backend (Node.js with Express and SQLite3):
    * npm install body-parser cors dotenv
    * npm install nodemon -D
    * ...or run: npm i (to create the node_modules folder)
+   * ...or run: npm update (to update and fix errors the node_modules folder)
 
 2. Create a file named "src/server.js" for your backend
    (It's done/created..)

@@ -13,20 +13,14 @@ function UsersPage() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [userList, setUserList] = useState([]);  // List of users
+  const [userListApi, setUserListApi] = useState([]);
   const { clearCart } = useContext(CartContext);
-
-  // const userList = [      // List of users
-  //         { id: 1, username: 'admin', fullname: 'Admin User', type: 'admin' },
-  //         { id: 2, username: 'user', fullname: 'Normal User', type: 'user' },
-  //         { id: 3, username: 'guest', fullname: 'Guest User', type: 'guest' },
-  //         { id: 4, username: 'test', fullname: 'Test User', type: 'test' },
-  //     ];
-  // setUserList(users)
 
   const fetchUserList = async () => {
     try {
       const response = await api.get('/users');
       const { users } = response.data;
+      setUserListApi(users);            // Set UserListApi to the users array
       setUserList(users);
     } catch (error) {
       console.error('Error fetching user list:', error);
@@ -41,25 +35,63 @@ function UsersPage() {
     navigate('/main');                    // Navigate to the Orders page
   }
 
-  async function handleUserByUserNameClick() {
-    const username = prompt('Enter the user name:');
+  // Find the user by Full Name
+  async function handleUserByFullNameClick() {
+    const fullname = prompt('Enter the full name:');
 
-    if (username === null) return;
-
-    if (!username) {
-      fetchUserList();
+    if (fullname === null) {
+      setUserList(userListApi);
       return;
-    }
+    };
 
-    try {
-      const response = await api.get(`/users/username/${username}`);
-      const { user } = response.data;
-      setUserList([user]);
-    } catch (error) {
-      console.error('Error fetching user list:', error);
+    if (fullname) {
+      // const filteredUsers = userListApi.filter(user => user.fullname === fullname);
+      // const filteredUsers = userListApi.filter(user => user.fullname.includes(fullname));
+       const filteredUsers = userListApi.filter(user => user.fullname.toLowerCase().includes(fullname.toLowerCase()));
+       setUserList(filteredUsers);
+    } else {
+      setUserList(userListApi);
     }
   }
 
+  // Find the user by User Name
+  async function handleUserByUserNameClick() {
+    const username = prompt('Enter the user name:');
+
+    if (username === null) {
+      setUserList(userListApi);
+      return;
+    };
+
+    if (username) {
+      // const filteredUsers = userListApi.filter(user => user.username === username);
+      // const filteredUsers = userListApi.filter(user => user.username.includes(username));
+       const filteredUsers = userListApi.filter(user => user.username.toLowerCase().includes(username.toLowerCase()));
+       setUserList(filteredUsers);
+    } else {
+      setUserList(userListApi);
+    }
+  }
+
+    // Find the user by Type
+    async function handleUserByTypeClick() {
+      const usertype = prompt('Enter the user type:');
+  
+      if (usertype === null) {
+        setUserList(userListApi);
+        return;
+      };
+  
+      if (usertype) {
+        // const filteredUsers = userListApi.filter(user => user.type === usertype);
+        // const filteredUsers = userListApi.filter(user => user.type.includes(usertype));
+         const filteredUsers = userListApi.filter(user => user.type.toLowerCase().includes(usertype.toLowerCase()));
+         setUserList(filteredUsers);
+      } else {
+        setUserList(userListApi);
+      }
+    }
+  
   function handleClearFilterClick() {
     fetchUserList();                      // Clear the filter
   }
@@ -86,7 +118,9 @@ function UsersPage() {
 
       <div className="div_row_buttons3">
         <>
-          <Button onClick={handleUserByUserNameClick} label="Display the user by user name" />
+          <Button onClick={handleUserByFullNameClick} label="Filter by full name" />
+          <Button onClick={handleUserByUserNameClick} label="Filter by user name" />
+          <Button onClick={handleUserByTypeClick} label="Filter by user type" />
         </>
       </div>
 

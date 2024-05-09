@@ -27,13 +27,20 @@ function setup() {
     db.run(`CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        book_id INTEGER NOT NULL,
         user_id INTEGER NOT NULL,
+        total REAL NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    )`);
+
+    // Create ORDER_ITEMS table if not exists
+    db.run(`CREATE TABLE IF NOT EXISTS order_items (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        order_id INTEGER NOT NULL,
+        book_id INTEGER NOT NULL,
         quantity INTEGER NOT NULL,
         price REAL NOT NULL,
-        total REAL NOT NULL,
-        FOREIGN KEY (book_id) REFERENCES books(id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (order_id) REFERENCES orders(id),
+        FOREIGN KEY (book_id) REFERENCES books(id)
     )`);
 }
 

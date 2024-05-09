@@ -14,7 +14,7 @@ function MainPage() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
   const isUserAdmin = user && user.type === 'admin';
-  const isUserUser = user && user.type === 'user';
+  // const isUserUser = user && user.type === 'user';
   const { clearCart } = useContext(CartContext);
 
 //   const inventory = useContext(InventoryContext);

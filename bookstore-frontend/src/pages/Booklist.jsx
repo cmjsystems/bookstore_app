@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import api from '../util/api';
 import "./../App.css";
+
+import api from '../util/api';
 
 import { AuthContext } from "../contexts/AuthProvider";
 import { CartContext } from "../contexts/CartProvider";
@@ -14,18 +15,20 @@ import "./../App.css";
 function BooklistPage() {
   const navigate = useNavigate();
   const [bookList, setBookList] = useState([]);  // List of books
+  const [bookListApi, setBookListApi] = useState([]);
 
   // const user = { id: 1, username: 'admin', type: 'admin' };
   const { user } = useContext(AuthContext);
-  const { addToCart } = useContext(CartContext);
+  const { addToCart, clearCart } = useContext(CartContext);
+
   const isUserAdmin = user && user.type === 'admin';
   const isUserUser = user && user.type === 'user';
-  const { clearCart } = useContext(CartContext);
-
+  
   const fetchBookList = async () => {
     try {
       const response = await api.get('/books');
-      const { books } = response.data;
+      const { books } = response.data;  // Extract books array from response.data
+      setBookListApi(books);            // Set bookListApi to the books array
       setBookList(books);
     } catch (error) {
       console.error('Error fetching book list:', error);
@@ -60,64 +63,80 @@ function BooklistPage() {
     }
   }
 
+  // Find the books by title
+  async function handleBooksByTitleClick() {
+    const title = prompt('Enter the title:');
+
+    if (title === null) {
+      setBookList(bookListApi);
+      return;
+    };
+
+    if (title) {
+      // const filteredBooks = bookListApi.filter(book => book.title === title);
+      // const filteredBooks = bookListApi.filter(book => book.title.includes(title));
+       const filteredBooks = bookListApi.filter(book => book.title.toLowerCase().includes(title.toLowerCase()));
+      setBookList(filteredBooks);
+    } else {
+      setBookList(bookListApi);
+    }
+  }
+
+  // Find the books by author
   async function handleBooksByAuthorClick() {
-    // Find the books by author
     const author = prompt('Enter the author:');
 
-    if (author === null) return;
-
-    if (!author) {
-      fetchBookList();
+    if (author === null) {
+      setBookList(bookListApi);
       return;
-    }
+    };
 
-    try {
-      const response = await api.get(`/books/author/${author}`);
-      const { books } = response.data;
-      setBookList(books);
-    } catch (error) {
-      console.error('Error fetching book list:', error);
+    if (author) {
+      // const filteredBooks = bookListApi.filter(book => book.author === author);
+      // const filteredBooks = bookListApi.filter(book => book.author.includes(author));
+       const filteredBooks = bookListApi.filter(book => book.author.toLowerCase().includes(author.toLowerCase()));
+      setBookList(filteredBooks);
+    } else {
+      setBookList(bookListApi);
     }
   }
 
+  // Find the books by category
   async function handleBooksByCategoryClick() {
-    // Find the books by category
     const category = prompt('Enter the category:');
 
-    if (category === null) return;
-
-    if (!category) {
-      fetchBookList();
+    if (category === null) {
+      setBookList(bookListApi);
       return;
-    }
+    };
 
-    try {
-      const response = await api.get(`/books/category/${category}`);
-      const { books } = response.data;
-      setBookList(books);
-    } catch (error) {
-      console.error('Error fetching book list:', error);
+    if (category) {
+      // const filteredBooks = bookListApi.filter(book => book.category === category);
+      // const filteredBooks = bookListApi.filter(book => book.category.includes(category));
+      const filteredBooks = bookListApi.filter(book => book.category.toLowerCase().includes(category.toLowerCase()));
+      setBookList(filteredBooks);
+    } else {
+      setBookList(bookListApi);
     }
   }
 
-  async function handleBooksUnderPriceClick() {
-    // Find the books under price
-    const price = prompt('Enter the price:');
+  // Find the books under price
+  async function handleBooksByPriceClick() {
+    const minPrice = parseFloat(prompt('Enter the minimum price:'));
+    const maxPrice = parseFloat(prompt('Enter the maximum price:'));
 
-    if (price === null) return;
-
-    if (!price) {
-      fetchBookList();
+    if (minPrice === null || maxPrice === null) {
+      setBookList(bookListApi);
       return;
     }
 
-    try {
-      const response = await api.get(`/books/price/${price}`);
-      const { books } = response.data;
-      setBookList(books);
-    } catch (error) {
-      console.error('Error fetching book list:', error);
+    if (isNaN(minPrice) || isNaN(maxPrice)) {
+      alert('Please enter valid prices.');
+      return;
     }
+
+    const filteredBooks = bookListApi.filter(book => book.price >= parseFloat(minPrice) && book.price <= parseFloat(maxPrice));
+    setBookList(filteredBooks);
   }
 
   function handleCartPageClick() {
@@ -125,17 +144,18 @@ function BooklistPage() {
   }
   
   async function handleAddToCartClick(id) {
-    const amount = prompt('Enter the amount:');
+    const amount = prompt('Enter the quantity:');
 
     if (amount === null) return;
 
     const item = { id, amount: parseInt(amount) };
 
     // Check if the amount is valid
-    if (item.amount > 0 && item.amount <= bookList.find(book => book.id === id).quantity) {
+    // if (item.amount > 0 && item.amount <= bookList.find(book => book.id === id).quantity) {
+    if (item.amount > 0 && item.amount <= bookList.find(book => book.id === id).avaiable) {
       await addToCart(item);
     } else {
-      alert('Invalid amount. Enter a quantity less than or equal to that available in stock.');
+      alert('Invalid quantity!!. Enter a quantity less than or equal to that available in stock.');
     }
   }
 
@@ -170,9 +190,10 @@ function BooklistPage() {
       <div>
         <div className="div_row_buttons3">
           <>
-            <Button onClick={handleBooksByAuthorClick} label="Display all books by a specific author" />
-            <Button onClick={handleBooksByCategoryClick} label="Display all books by a specific category" />
-            <Button onClick={handleBooksUnderPriceClick} label="Display all books under a certain price" />
+            <Button onClick={handleBooksByTitleClick} label="Filter all books by title" />
+            <Button onClick={handleBooksByAuthorClick} label="Filter all books by author" />
+            <Button onClick={handleBooksByCategoryClick} label="Filter all books by category" />
+            <Button onClick={handleBooksByPriceClick} label="Filter all books by price" />
           </>
         </div>
 
@@ -237,7 +258,7 @@ function BooklistPage() {
 
               {/* Show the Users field just if the logged user is administrator type */}
               {isUserAdmin && (
-                <th className="table_th_1"> Quantity </th>
+                <th className="table_th_1"> Initial Quantity </th>
               )}
 
               {/* Show the Users field just if the logged user is administrator type
@@ -269,25 +290,24 @@ function BooklistPage() {
                   // <td className="table_td_1"> <Button onClick={handleCartPageClick} label="Cart" /> </td>
                   <td> <button onClick={() => handleAddToCartClick(book.id)}>Add to Cart</button> </td>
                 )}
-                <td className="table_td_1"> {book.id}               </td>
-                <td className="table_td_1"> {book.title}            </td>
-                <td className="table_td_1"> {book.author}           </td>
-                <td className="table_td_1"> {book.isbn}             </td>
-                <td className="table_td_1"> {book.category}         </td>
-                <td className="table_td_1"> {book.price.toFixed(2)} </td>
-                {/* Show the Users field just if the logged user is administrator type */}
-                {isUserAdmin && (
-                  <td className="table_td_1"> {book.quantity}       </td>
-                )}
-                
-                {/* Show the Users field just if the logged user is administrator type
-                {isUserAdmin && ( */}
-                  <td className="table_td_1"> {book.quantity}       </td>
-                {/* )} */}
+                <td className="table_td_1"> {book.id}                 </td>
+                <td className="table_td_1"> {book.title}              </td>
+                <td className="table_td_1"> {book.author}             </td>
+                <td className="table_td_1"> {book.isbn}               </td>
+                <td className="table_td_1"> {book.category}           </td>
+                <td className="table_td_1"> {(book.price.toFixed(2))} </td>
 
                 {/* Show the Users field just if the logged user is administrator type */}
                 {isUserAdmin && (
-                  <td className="table_td_1"> {(book.quantity * book.price).toFixed(2)} </td>
+                  <td className="table_td_1"> {book.quantity}         </td>
+                )}
+                
+                {/* Available in stock */}
+                  <td className="table_td_1"> {book.avaiable}         </td>
+
+                {/* Show the Users field just if the logged user is administrator type */}
+                {isUserAdmin && (
+                  <td className="table_td_1"> {(book.avaiable * book.price).toFixed(2)}   </td>
                 )}
               </tr>
             ))}

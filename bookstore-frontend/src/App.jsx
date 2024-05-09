@@ -11,6 +11,7 @@ import UsersPage from './pages/Users';
 import MainPage from './pages/Main';
 import BooklistPage from './pages/Booklist';
 import OrdersPage from './pages/Orders';
+import OrderDetailPage from './pages/OrderDetail';
 import AddBookPage from './pages/AddBook';
 import UpdBookPage from './pages/UpdBook';
 import CartPage from './pages/Cart';
@@ -33,6 +34,7 @@ function App() {
         <Route path="/main" element={<MainPage />} />
         <Route path="/booklist" element={<BooklistPage />} />
         <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/orderdetail/:id" element={<OrderDetailPage />} />
         <Route path="/addbook" element={<AddBookPage />} />
         <Route path="/updbook/:id" element={<UpdBookPage />} />
         <Route path="/cart" element={<CartPage />} />

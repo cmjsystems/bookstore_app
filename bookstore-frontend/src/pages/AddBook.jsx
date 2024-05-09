@@ -17,7 +17,7 @@ function AddBookPage() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
-  const { setBook } = useContext(AuthContext);
+  // const { setBook } = useContext(AuthContext);
   const { clearCart } = useContext(CartContext);
 
   const [title, setTitle] = useState('');

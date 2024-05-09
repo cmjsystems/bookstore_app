@@ -6,7 +6,14 @@ const db = new sqlite3.Database(process.env.DB_PATH || '');
 
 // Get the Books list
 router.get('/books', (req, res) => {
-  db.all('SELECT * FROM books', (err, rows) => {
+  const query = `SELECT books.*
+                  , sum(order_items.quantity) ordered
+                  , books.quantity - sum(order_items.quantity) avaiable 
+                FROM books 
+                JOIN order_items ON books.id = order_items.book_id
+                GROUP BY books.id`
+  // db.all('SELECT books.*, sum(order_items.quantity) ordered, books.quantity - sum(order_items.quantity) avaiable FROM books JOIN order_items ON books.id = order_items.book_id', (err, rows) => {
+  db.all(query, (err, rows) => {
     if (err) {
       console.error('Error fetching books:', err);
       res.status(500).json({ error: 'Internal Server Error' });

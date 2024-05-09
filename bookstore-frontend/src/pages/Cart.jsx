@@ -18,26 +18,26 @@ function CartPage() {
 
   const [itemsWithDetails, setItemsWithDetails] = useState([]);
   // const [error, setError] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
+  // const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const loadItems = async () => {
-    setIsLoading(true);
-    try {
-      const items = await Promise.all(cartItems.map(async (item) => {
-        const response = await api.get(`/books/book/${item.id}`);
-        const { data } = response;
-        return { ...data, quantity: item.amount };
-      }));
-      setItemsWithDetails(items);
-    } catch (error) {
-      console.error('Error fetching cart data.');
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   useEffect(() => {
+    const loadItems = async () => {
+      setIsLoading(true);
+      try {
+        const items = await Promise.all(cartItems.map(async (item) => {
+          const response = await api.get(`/books/book/${item.id}`);
+          const { data } = response;
+          return { ...data, quantity: item.amount };
+        }));
+        setItemsWithDetails(items);
+      } catch (error) {
+        console.error('Error fetching cart data.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
     loadItems();
   }, [id, cartItems]); // Reload items when cart items change
 
@@ -45,27 +45,31 @@ function CartPage() {
     navigate('/booklist'); // Navigate to the Booklist page
   }
 
-  function handleCheckoutClick() {
-    // Implement checkout functionality
-    const confirmed = window.confirm("Can you confirm the order?");
+  async function handleCheckoutClick() {
+    const confirmed = window.confirm("Would you like to confirm the order?");
+
     if (confirmed) {
-      const order = {
+      const payload = {
+        userId: user.id,
         items: itemsWithDetails.map(item => ({
           bookId: item.book.id,
-          quantity: item.quantity
+          quantity: item.quantity,
+          price: item.book.price,
         })),
         total: itemsWithDetails.reduce((total, item) => total + (item.quantity * item.book.price), 0)
       };
-      // Send the order data to the server for processing
-      api.post('/order', order)
-        .then(response => {
-          // Order successfully placed, navigate to the order confirmation page
-          navigate('/order-confirmation', { state: { orderId: response.data.orderId } });
-        })
-        .catch(error => {
-          console.error('Error placing the order:', error);
-          // Handle the error, show an error message to the user, etc.
-        });
+
+      try {
+        const res = await api.post('/order', payload);
+        if (res.status === 201) {
+          const { id } = res.data;
+          console.log(`Order placed successfully with ID: ${id}`);
+          clearCart();
+          navigate('/booklist');
+        }
+      } catch (error) {
+        console.error('Error placing the order:', error);
+      }
     } else {
       // User canceled the order
     }
@@ -76,8 +80,14 @@ function CartPage() {
     navigate('/'); // Navigate to the Home page
   }
 
+// Calculate the total value of the cart items
+const total = itemsWithDetails.reduce((acc, item) => {
+  return acc + item.quantity * item.book.price;
+}, 0);
+
   return (
-    <div className="div_insert_update" key={refreshKey}>
+    // <div className="div_insert_update" key={refreshKey}>
+    <div className="div_insert_update">
 
       <h1>Bookstore - Cart</h1>
       <br />
@@ -89,6 +99,9 @@ function CartPage() {
       <br />
       <p>
         <Button onClick={clearCart} label="Clear Cart" />
+        &nbsp;
+        &nbsp;
+        Total Order Value: ${total.toFixed(2)}
       </p>
       <br />
 
