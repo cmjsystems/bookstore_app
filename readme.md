@@ -1,8 +1,19 @@
 # Team:
 - Brayan Gutierrez              (Student Number: 223-1122)
+  * Brayan developed for the frontend the Orders.jsx, OrderDetail.jsx, components and App.css pages.
+
 - Claudiomar Moreira de Jesus   (Student Number: 223-0862)
+  * Claudiomar developed the entire backend, the database connection (SQLite3) with the frontend
+    application, the access routes and the folder structure. For the frontend, he developed the
+    contexts, App.jsx, index.js, .gitignore, api.js, Main.jsx, Home.jsx and Cart.jsx pages. 
+
 - Felipe Cardona Jaramillo      (Student Number: 223-0752)
+  * Felipe developed for the frontend the Bookshop.jsx, AddBook.jsx, UpdBook.jsx
+    and Booklist.jsx pages.
+
 - Raymond Aligbe                (Student Number: 223-0898)
+  * Raymond developed the entire document with business rules and process diagrams. For the
+    frontend code, he developed the Login.jsx, Register.jsx, RegisterAdmin.jsx and Users.jsx pages.
 
 # GitHub:
 - Create the project on GitHub with public permission (bookstore_app)
@@ -14,8 +25,8 @@
   * git commit -m "First Commit."
   * git status
   - Copy the commands from the GitHub website project
-    * git remote add origin https://github.com/cmjsystems/bookstore_app.git
     * git branch -M main
+    * git remote add origin https://github.com/cmjsystems/bookstore_app.git
     * git push -u origin main
 
 - Clone from GitHub to local machine:
